@@ -55,6 +55,7 @@ html {
 .queue {
     background-color: hsla(0, 0%, 41%, 0.24);
     padding: 10px;
+    
 }
 
 
@@ -67,12 +68,14 @@ html {
 .billboard {
     position: absolute;
     visibility: hidden;
+    
 
 }
 
 .billboard-show {
     top: 0;
     left: 0;
+    width: 100%;
     height: 100%;
     grid-column: 1 / 11;
     grid-row: 1 / 6;
@@ -86,15 +89,16 @@ html {
 }
 
 #combatant-area {
-    grid-column: 1 / 7;
+    grid-column: 1 / 5;
     grid-row: 1 / 6;
     justify-content: space-evenly;
+   
    
 }
 
 .champion-box {
-    grid-column: 8 / 11;
-    grid-row: 1 / 2;
+    grid-column: 5 / 11;
+    grid-row: 1 / 3;
 }
 
 .scoreboard {
@@ -119,7 +123,7 @@ html {
 
 .defender-box {
    
-    grid-column: 8 / 11;
+    grid-column: 5 / 11;
     grid-row: 5 / 6;
 }
 
@@ -141,6 +145,7 @@ html {
     left: 0;
     top: 0;
     margin: auto 0;
+    
 }
 
 
@@ -211,6 +216,7 @@ html {
 .big-card-text> {
     margin: 0;
     padding: 10px;
+    line-height: 2.0rem;
 }
 
 .hero-text>h2 {
@@ -247,4 +253,111 @@ html {
     box-shadow: 0 5px #666;
     transform: translateY(4px);
   }
+
+  .fancyLetter {
+    font-size: 1.0rem;
+    animation: shadow, size;
+    animation-duration: 1.0s;
+    animation-timing-function: linear;
+    text-shadow: none;
+   /* width: auto; */
+    display: inline-block;
+   /* margin: 0 auto; */
+    padding:  15px;
+    text-align: center;
+  }
+
+  @keyframes shadow {
+    0% {
+        text-shadow: 5px 5px 3px black;
+    }
+
+    15% {
+        text-shadow: 3px 4px 3px #000000d2;
+    }
+
+    25% {
+        text-shadow: 2px 3px 3px #0000008e;
+    }
+
+    40% {
+        text-shadow: 0px 1px 3px #00000070;
+    }
+
+    50% {
+        text-shadow: -1px 0px 3px #00000048;
+    }
+
+    65% {
+        text-shadow: -2px -1px 3px #000000e1;
+    }
+
+    75% {
+        text-shadow: -3px -2px 3px #000000e3;
+    }
+
+    85% {
+        text-shadow: -4px -4px 3px #000000d0;
+    }
+
+    90% {
+        text-shadow: -5px -5px 3px black;
+    }
+
+    100% {
+        text-shadow: none;
+    }
+}
+
+@keyframes size {
+    0% {
+        font-size: .25rem;
+    }
+
+    15% {
+        font-size: .75rem;
+    }
+
+    25% {
+        font-size: 1.0rem;
+    }
+
+    50% {
+        font-size: 1.5rem;
+    }
+
+    75% {
+        font-size: 2.0rem;
+    }
+
+    80% {
+        font-size: 1.5rem;
+    }
+
+    100% {
+        font-size: 1.0rem;
+    }
+}
+@keyframes disappear {
+    0% {
+        border-bottom: 3px solid #000000fb;
+    }
+
+    25% {
+        border-bottom: 2px solid #000000b4;
+    }
+
+    50% {
+        border-bottom: 1px solid #00000065;
+    }
+    
+    75% {
+        border-bottom: .5px solid #0000002a;
+    }
+
+    100% {
+        border-bottom: none;
+    }
+}
+
 

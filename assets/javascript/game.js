@@ -12,18 +12,16 @@ $(document).ready(function() {
         this.attack = function attack(style) { 
             //If attacker is champion, then use attackPower. 
             if (style === "attack") {//Send attackDamage. 
-                if (pitFight.round < 2) {
+                
                     pitFight.round++;
-                    this.attackPower = this.attackPower * 2;
-                    return Math.round(this.attackPower / 2);
-                } else {           
+                    
                 this.attackPower = this.attackPower * 2;
                  return this.attackPower;
                 }       
             if (style === "counter") {//Otherwise, counterPower.
                 return this.counterPower;
             } 
-        }   
+          
         };
     
         this.takeDamage = function takeDamage(number) {
@@ -38,8 +36,8 @@ $(document).ready(function() {
     
     var pitFight = { //Beginnine of the game object
     combatants: [],
-    dudes: ["Leia", "Luke", "Darth Vader", "Han Solo", "The Emperor", "Obi Wan Kenobi", "Yoda", "Chewbacca", "Kylo Ren","Boba Fett","Snoke","General Grievous"],
-    images: ['./assets/images/images/leia.jpg', './assets/images/images/luke edit.jpg','./assets/images/images/darth vader edit.jpg', './assets/images/images/han solo edit.jpg', './assets/images/images/palpatine edit.jpg', './assets/images/images/obi wan edit.jpg', './assets/images/images/yoda.jpg', './assets/images/images/chewbacca edit.jpg', './assets/images/images/kylo ren edit.jpg', './assets/images/images/boba fett edit.jpg', './assets/images/images/snoke edit.jpg', './assets/images/images/grievous edit.jpg'],
+    dudes: ["Leia", "Luke", "Darth Vader", "Han Solo", "The Emperor", "Obi Wan Kenobi", "Yoda", "Chewbacca", "Kylo Ren","Boba Fett","Snoke","General Grievous","Darth Maul"],
+    images: ['./assets/images/images/leia edit.jpg', './assets/images/images/luke edit.jpg','./assets/images/images/darth vader edit.jpg', './assets/images/images/han solo edit.jpg', './assets/images/images/palpatine edit.jpg', './assets/images/images/obi wan edit.jpg', './assets/images/images/yoda edit.jpg', './assets/images/images/chewbacca edit.jpg', './assets/images/images/kylo ren edit.jpg', './assets/images/images/boba fett edit.jpg', './assets/images/images/snoke edit.jpg', './assets/images/images/grievous edit.jpg', './assets/images/images/darth maul edit.jpg'],
     gamesPlayed: 0,
     wins: 0,
     losses: 0,
@@ -52,6 +50,7 @@ $(document).ready(function() {
     moveCard() {
         function move() {
             var x = $(this);
+
             if (pitFight.counter < 1) {
                 $("#champion").append(x);
                 pitFight.champion = x;
@@ -81,6 +80,7 @@ $(document).ready(function() {
         $("#attack-button").on("click", function(){
             var damage = attacker.attack("attack");
             var championAttackPower = pitFight.champion.find("#attack-power");
+            championAttackPower.addClass("fancyLetter");
             championAttackPower.text("Attack Power: " + damage);
             var counterDmg = defender.counterPower;
             var defenderDead = defender.takeDamage(damage);
@@ -89,9 +89,14 @@ $(document).ready(function() {
             if (defenderDead) {
                 pitFight.defenders[0].hide();
                 pitFight.defenders.shift();
+                pitFight.gameOver();
+                if (pitFight.gameOver()) {
+                    console.log("defender dead inside resolveattack called the gamereset");
+                    pitFight.gameReset();
+                };
                 pitFight.resolveBattle();
                 pitFight.round++;
-                pitFight.gameOver();
+                
             } 
             var championDead = attacker.takeDamage(counterDmg);
             var championHp = pitFight.champion.find("#hp");
@@ -99,21 +104,34 @@ $(document).ready(function() {
             if (championDead) {
             pitFight.champion.hide();
             pitFight.gameOver();
+            if (pitFight.gameOver()) {
+                console.log("champion dead inside resolveattack called the gamereset");
+                pitFight.gameReset();
+            };
             } 
         });   
+        return true;
     },
     
     resolveBattle () {
+        
+        messages.billboard(messages.readyBattle);
         $("#pit").empty();
         $("#combatant-area").hide();
         $("#combatant-area").addClass("billboard");
         $("#champion-box").addClass("billboard");
         $("#battlefield").addClass("battlefield");
         $("#defender-box").addClass("ready-defender");
-        messages.billboard(messages.readyBattle);
+        
+        if ((pitFight.defenders.length === 0) || (pitFight.champion === undefined) || (pitFight.champion.hp < 0)) {
+            return;
+        }
+       
         (pitFight.champion).removeClass("hero-card", "hero-text");
         (pitFight.champion).addClass("big-card", "big-card-text");
         $("#pit").append(pitFight.champion);
+
+        
 
         var vs = $("<img class = 'versus' src = './assets/images/images/versus.jpg' style='width: 100px' height='100px' display='inline-block'>")
         $("#pit").append(vs);
@@ -121,7 +139,7 @@ $(document).ready(function() {
         (pitFight.defenders[0]).addClass("big-card", "big-card-text");
         $("#pit").append(pitFight.defenders[0]);
         pitFight.resolveAttack();
-    
+
     },
     
     d6(factor) {
@@ -133,22 +151,28 @@ $(document).ready(function() {
     },
     
     gameOver() {
-    if ((pitFight.combatants[pitFight.champion.attr("combatant-index")].hp < 1) && (pitFight.defenders.length > 0)) {
+    if (pitFight.combatants[pitFight.champion.attr("combatant-index")].hp < 1) {
         console.log("We're in the champion loses outright condition.");
 
         pitFight.losses++;
         $("#losses").text("Losses: " + pitFight.losses);
         messages.billboard(messages.gameOver);
         pitFight.gamesPlayed++;
+        console.log("champion loses outright called the gamereset");
         pitFight.gameReset();
-    } else if ((pitFight.defenders.length < 1) && (pitFight.combatants[pitFight.champion.attr("combatant-index")].hp > 0)) {
+        return true;
+
+    } else if (pitFight.defenders.length < 1)  {
         console.log("We're in the champion wins condition.");
 
         pitFight.wins++;
         $("#wins").text("Wins: " + pitFight.wins);
         messages.billboard(messages.gameOver);
         pitFight.gamesPlayed++;
+        console.log("champion wins called the gamereset");
         pitFight.gameReset();
+        return true;
+
     } else if ((pitFight.combatants[pitFight.champion.attr("combatant-index")].hp < 1) && (pitFight.defenders.length < 1)) {
         console.log("We're in the champion loses by default condition.");
 
@@ -156,29 +180,55 @@ $(document).ready(function() {
         $("#losses").text("Losses: " + pitFight.losses);
         messages.billboard(messages.gameOver);
         pitFight.gamesPlayed++;
+        console.log("champion loses by default called the gamereset");
         pitFight.gameReset();
+        return true;
     }
     },
     
     gameReset() {
+        
     console.log("Somebody called the game reset");
 
-        $("#characterPen, #champion, #defender, #pit").empty();
+        
+
+       
+
+        $("#characterPen, #billboard, #champion, #defender, #pit").empty();
         pitFight.combatants = [];
-        pitFight.champion = "";
+        console.log("from gamereset, combatants: " + console.dir(pitFight.combatants));
+        //pitFight.champion = "";
         pitFight.counter = 0;
         pitFight.rounds = 1;
+        
+        //messages.billboard(messages.restart);
+
+        if (pitFight.gamesPlayed < 1) {
+            messages.billboard(messages.rules);
+        };
+
         pitFight.setBoard();
-        pitFight.moveCard();
+        console.log("from gamereset, setboard has returned from duty");
+       
+       
+           //console.log("from gamereset, billboard is done " + messages.billboard(messages.restart));
+        
+        
+        //pitFight.moveCard();
+       // console.log("from gamereset, movecard has returned from duty");
+        
     },
 
-    setBoard(location) {
+    setBoard() {
         
         pitFight.combatants = [];
         if ($("#character-pen").hasClass("billboard")) {
             $("#character-pen").removeClass("billboard");
         }
-        $("#character-pen").show();
+
+        $("#combatant-area").show();
+        $("#champion-box").show();
+        $("#defender").show();
         for (i = 0; i < pitFight.dudes.length; i++) {
             var x = new Character();
             x.attackPower = this.d6(3);
@@ -200,6 +250,7 @@ $(document).ready(function() {
             //render the cards to the characterPen
             $("#characterPen").append(card);
      }
+     pitFight.moveCard();
     }
 
     } //end pitFight game object
@@ -208,6 +259,7 @@ $(document).ready(function() {
         rules: 'Choose your champion by double-clicking on the card. After you have chosen your champion, choose three defenders by double-clicking on their cards. <br> Choose wisely. <br> During each round, the Champion attacks the first Defender in the group. The Defender responds with a Counter Attack. If either are reduced below 0 HP, they die. However, with each susequent round, the Champion\'s Attack Power doubles while the Defender\'s Counter Attack Power stays the same. ',
         readyBattle: 'Are you ready to start the battle?',
         gameOver: 'Game over!',
+        restart: 'Would you like another game?',
     
         billboard(message) {
             $("#billboard").empty();
@@ -223,12 +275,15 @@ $(document).ready(function() {
                 announcement.hide();
                 return true;
             })
+            return false;
         },
     } //end messages object
         //The game initializes here.
-        messages.billboard(messages.rules);
-        pitFight.setBoard();
-        pitFight.moveCard();
+       // messages.billboard(messages.rules);
+       // pitFight.setBoard();
+        //pitFight.moveCard();
+
+        pitFight.gameReset();
           
     }); //end of ready function call
     
