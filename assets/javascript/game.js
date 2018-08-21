@@ -14,9 +14,8 @@ $(document).ready(function() {
             if (style === "attack") {//Send attackDamage. 
                 
                     pitFight.round++;
-                    
-                this.attackPower = this.attackPower * 2;
-                 return this.attackPower;
+                    this.attackPower = this.attackPower * 2;
+                return Math.round(this.attackPower / 2);
                 }       
             if (style === "counter") {//Otherwise, counterPower.
                 return this.counterPower;
@@ -48,6 +47,8 @@ $(document).ready(function() {
     album: [],
     
     moveCard() {
+        pitFight.defenders = [];
+       // pitFight.counter = 0;
         function move() {
             var x = $(this);
 
@@ -60,19 +61,31 @@ $(document).ready(function() {
                 pitFight.defenders.push(x);
                 $(".hero-card").off("dblclick", ".hero-card");
                 pitFight.counter++   
+            }
                 if (pitFight.defenders.length === 3) { 
                     pitFight.resolveBattle(); 
                 }
-            }  
+            
         }
             $(".hero-card").on("dblclick", move);
+            console.log("counter right next to the dbleclick event listener " + pitFight.counter);
     },
     
     resolveAttack() {
+        
+        if ($("#pit").hasClass("billboard") ) {
+            $("#pit").removeClass("billboard");
+        };
+       
+
         var x = $("<button type='button'class='action-button' id='attack-button'>Attack!</button>");
-        if (pitFight.counter === 4) { 
+        console.log("the counter is " + pitFight.counter);
+        if ($("#pit").hasClass("action-button")) { 
+            $("#pit").remove("action-button");
             $("#pit").append(x);   
-        }
+        } else {
+            $("#pit").append(x);
+        };
         var victim = pitFight.defenders[0].attr("combatant-index");
         var defender = pitFight.combatants[victim]; 
         var hero = pitFight.champion.attr("combatant-index");
@@ -80,7 +93,9 @@ $(document).ready(function() {
         $("#attack-button").on("click", function(){
             var damage = attacker.attack("attack");
             var championAttackPower = pitFight.champion.find("#attack-power");
-            championAttackPower.addClass("fancyLetter");
+            if (championAttackPower.hasClass("fancyLetter") === false) {
+                championAttackPower.addClass("fancyLetter");
+            }; 
             championAttackPower.text("Attack Power: " + damage);
             var counterDmg = defender.counterPower;
             var defenderDead = defender.takeDamage(damage);
@@ -122,7 +137,7 @@ $(document).ready(function() {
         $("#champion-box").addClass("billboard");
         $("#battlefield").addClass("battlefield");
         $("#defender-box").addClass("ready-defender");
-        
+        $("#thePit").addClass("billboard");
         if ((pitFight.defenders.length === 0) || (pitFight.champion === undefined) || (pitFight.champion.hp < 0)) {
             return;
         }
@@ -130,14 +145,12 @@ $(document).ready(function() {
         (pitFight.champion).removeClass("hero-card", "hero-text");
         (pitFight.champion).addClass("big-card", "big-card-text");
         $("#pit").append(pitFight.champion);
-
-        
-
         var vs = $("<img class = 'versus' src = './assets/images/images/versus.jpg' style='width: 100px' height='100px' display='inline-block'>")
         $("#pit").append(vs);
         (pitFight.defenders[0]).removeClass("hero-card", "hero-text");
         (pitFight.defenders[0]).addClass("big-card", "big-card-text");
         $("#pit").append(pitFight.defenders[0]);
+        $("#pit").hide();
         pitFight.resolveAttack();
 
     },
@@ -156,8 +169,11 @@ $(document).ready(function() {
 
         pitFight.losses++;
         $("#losses").text("Losses: " + pitFight.losses);
+        if ($("#billboard").hasClass("billboard")) {
+            $("#billboard").addClass("billboard-show");
+        };
         messages.billboard(messages.gameOver);
-        pitFight.gamesPlayed++;
+        
         console.log("champion loses outright called the gamereset");
         pitFight.gameReset();
         return true;
@@ -167,28 +183,24 @@ $(document).ready(function() {
 
         pitFight.wins++;
         $("#wins").text("Wins: " + pitFight.wins);
+        if ($("#billboard").hasClass("billboard")) {
+            $("#billboard").addClass("billboard-show");
+        };
         messages.billboard(messages.gameOver);
-        pitFight.gamesPlayed++;
+      
         console.log("champion wins called the gamereset");
         pitFight.gameReset();
         return true;
 
-    } else if ((pitFight.combatants[pitFight.champion.attr("combatant-index")].hp < 1) && (pitFight.defenders.length < 1)) {
-        console.log("We're in the champion loses by default condition.");
-
-        pitFight.losses++;
-        $("#losses").text("Losses: " + pitFight.losses);
-        messages.billboard(messages.gameOver);
-        pitFight.gamesPlayed++;
-        console.log("champion loses by default called the gamereset");
-        pitFight.gameReset();
-        return true;
-    }
+    } 
+        return false;
+    
     },
     
     gameReset() {
         
     console.log("Somebody called the game reset");
+    console.log("games played = " + pitFight.gamesPlayed);
         $(pitFight.champion).empty();
 
 
@@ -215,19 +227,19 @@ $(document).ready(function() {
         if (pitFight.gamesPlayed < 1) {
             messages.billboard(messages.rules);
         };
-
+        
         pitFight.setBoard();
         console.log("from gamereset, setboard has returned from duty");
         
     },
 
     setBoard() {
-        
+        pitFight.gamesPlayed++;
+        pitFight.counter = 0;
         pitFight.combatants = [];
         if ($("#character-pen").hasClass("billboard")) {
             $("#character-pen").removeClass("billboard");
-        }
-
+        };
         $("#combatant-area").show();
         $("#champion-box").show();
         $("#defender").show();
@@ -253,15 +265,17 @@ $(document).ready(function() {
             $("#characterPen").append(card);
      }
      if (pitFight.gamesPlayed > 1) {
+         console.log("games played: " + pitFight.gamesPlayed);
         messages.billboard(messages.restart);
      }
+     pitFight.counter = 0;
      pitFight.moveCard();
     }
 
     } //end pitFight game object
     
     var messages = { //Begin messages object
-        rules: 'Choose your champion by double-clicking on the card. After you have chosen your champion, choose three defenders by double-clicking on their cards. <br> Choose wisely. <br> During each round, the Champion attacks the first Defender in the group. The Defender responds with a Counter Attack. If either are reduced below 0 HP, they die. However, with each susequent round, the Champion\'s Attack Power doubles while the Defender\'s Counter Attack Power stays the same. ',
+        rules: 'Choose your champion by double-clicking on the card. After you have chosen your champion, choose three defenders by double-clicking on their cards. <br> Choose wisely. <br> During each round, the Champion attacks the first Defender in the group. The Defender responds with a Counter Attack. If either are reduced below 0 HP, they die. However, with each susequent round, the Champion\'s Attack Power doubles while the Defender\'s Counter Attack Power stays the same. <br>You win the game only if your champion survives all the counter attacks from the Defenders while eliminating all of them.',
         readyBattle: 'Are you ready to start the battle?',
         gameOver: 'Game over!',
         restart: 'Would you like another game?',
@@ -278,16 +292,13 @@ $(document).ready(function() {
             $("#billboard").show();
             x.on("click", function(){
                 announcement.hide();
+                $("#pit").show();
                 return true;
             })
             return false;
         },
     } //end messages object
-        //The game initializes here.
-       // messages.billboard(messages.rules);
-       // pitFight.setBoard();
-        //pitFight.moveCard();
-
+        
         pitFight.gameReset();
           
     }); //end of ready function call

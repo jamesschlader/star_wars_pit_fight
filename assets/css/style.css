@@ -92,9 +92,9 @@ html {
     grid-column: 1 / 5;
     grid-row: 1 / 6;
     justify-content: space-evenly;
-   
-   
+    
 }
+ 
 
 .champion-box {
     grid-column: 5 / 11;
@@ -145,9 +145,11 @@ html {
     left: 0;
     top: 0;
     margin: auto 0;
-    
+    overflow: hidden;
 }
-
+#pit {
+    overflow: hidden;
+}
 
 .hero-card {
     
@@ -170,6 +172,8 @@ html {
     position: relative;
     box-shadow: 6px 6px 6px #BB0B0A;
     transition: 3s;
+    overflow: hidden;
+    
 }
 
 .hero-card>p {
