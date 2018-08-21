@@ -1,7 +1,7 @@
 //Star Wars Pit Fight Object Game
 //Main object: starWars
 
-//$(document).ready(function() {    
+$(document).ready(function() {    
 
     var Character = function Character() {
         name = "";
@@ -10,7 +10,7 @@
         counterPower = 0;
         icon = "";
         
-        var attack = function attack(style) { 
+        this.attack = function attack(style) { 
             //If attacker is champion, then use attackPower. 
     
             if (style === "attack") {//Send attackDamage. 
@@ -30,7 +30,7 @@
         }   
         };
     
-        var takeDamage = function takeDamage(number) {
+        this.takeDamage = function takeDamage(number) {
             console.log(this + " taking damage!");
             this.hp = this.hp - number;
             console.log(this + " has " + this.hp + " hp left."); 
@@ -45,8 +45,8 @@
     
     var pitFight = {
     combatants: [],
-    dudes: ["Leia", "Luke", "Darth Vader", "Han Solo", "Emperor Palpatine", "Obi Wan Kebobi", "Yoda", "Chewbacca", "Kylo Ren","Boba Fett","Snoke","General Grievous"],
-    images: ['./assets/images/images/leia.jpg', './assets/images/images/luke.jpg','./assets/images/images/darth vader.jpg', './assets/images/images/han solo.jpg', './assets/images/images/palpatine.jpg', './assets/images/images/obi wan.jpg', './assets/images/images/yoda.jpg', './assets/images/images/chewbacca.jpg', './assets/images/images/kylo ren.jpg', './assets/images/images/boba fett.jpg', './assets/images/images/snoke.jpg', './assets/images/images/grievous.jpg'],
+    dudes: ["Leia", "Luke", "Darth Vader", "Han Solo", "The Emperor", "Obi Wan Kenobi", "Yoda", "Chewbacca", "Kylo Ren","Boba Fett","Snoke","General Grievous"],
+    images: ['./assets/images/images/leia.jpg', './assets/images/images/luke edit.jpg','./assets/images/images/darth vader edit.jpg', './assets/images/images/han solo edit.jpg', './assets/images/images/palpatine edit.jpg', './assets/images/images/obi wan edit.jpg', './assets/images/images/yoda.jpg', './assets/images/images/chewbacca edit.jpg', './assets/images/images/kylo ren edit.jpg', './assets/images/images/boba fett edit.jpg', './assets/images/images/snoke edit.jpg', './assets/images/images/grievous edit.jpg'],
     gamesPlayed: 0,
     wins: 0,
     losses: 0,
@@ -96,25 +96,41 @@
         }
     
         var victim = pitFight.defenders[0].attr("combatant-index");
-        
+        console.log("this is the victim number which is supposed to help decide who the defender is: " + victim);
         var defender = pitFight.combatants[victim]; 
         var hero = pitFight.champion.attr("combatant-index");
         var attacker = pitFight.combatants[hero];
+        console.log("our hero is " + console.dir(attacker));
+        console.log("our hero's name is " + attacker.name);
+        console.log("The defender is " + defender.name);
+        console.log("The defender's card: " + console.dir(defender));
     
         $("#attack-button").on("click", function(){
             console.log("It's an attack!")
-            defender.takeDamage(attacker.attack("attack"));
-            pitFight.defenders[0].child("<p id = 'hp' >", defender.hp);
-            if (defender.takeDamage(attacker.attack("attack"))) {
+            var damage = attacker.attackPower;
+            console.log("damage from attacker = " + damage);
+            var counterDmg = defender.counterPower;
+            console.log("counter attack damage = " + counterDmg);
+            console.log("The defender's stat sheet: " + console.dir(defender));
+            var defenderDead = defender.takeDamage(damage);
+            console.log("is the defender dead? " + console.dir(defender.takeDamage(damage)) );
+           console.log("The defender's card info, I hope: " + console.dir(pitFight.defenders[0]));
+           console.log("The defender's new hp: " + defender.hp);
+           var defenderHp = pitFight.defenders[0].find("#hp");
+           defenderHp.text(defender.hp);
+
+            if (defenderDead) {
+                
                 pitFight.defenders.shift();
                 $("#defender-area").append(pitFight.defenders[0]);
                 pitFight.round++;
                 pitFight.gameOver();
             }
             console.log("counter attack!");
-            attacker.takeDamage(defender.attack("counter"));
-            pitFight.champion.child("<p id = 'hp' >", attacker.hp);
-            if (attacker.takeDamage(defender.attack("counter"))) {
+            var attackerDead = attacker.takeDamage(counterDmg);
+            var championHp = pitFight.champion.find("#hp");
+           championHp.text(champion.hp);
+            if (attackerDead) {
             console.log("Champion is dead!");
             }
             pitFight.gameOver();
@@ -126,7 +142,7 @@
        
     $("#pit").append(pitFight.champion);
     
-    var vs = $("<img class = 'versus' src = './assets/images/images/versus.jpg' style='width: 200px' height='200px'>")
+    var vs = $("<img class = 'versus' src = './assets/images/images/versus.jpg' style='width: 100px' height='100px'>")
     $("#pit").append(vs);
     
     $("#pit").append(pitFight.defenders[0]);
@@ -137,7 +153,7 @@
     
     d6(factor) {
         sum = 0;
-        for (i = 1; i < (factor + 1); i++) {
+        for (j = 1; j < (factor + 1); j++) {
             sum = sum + (Math.floor((Math.random() * 5) + 1));
         }
         return sum;
@@ -146,13 +162,17 @@
     gameOver() {
     if (pitFight.champion.hp < 1) {
         pitFight.wins++;
-    } else if (pitFight.defenders.length < 1) {
-        pitFight.losses++;
-    } else {
-        messages.billboard(message.gameOver);
+        messages.billboard(messages.gameOver);
         pitFight.gamesPlayed++;
         pitFight.gameReset();
-    }
+    } else if (pitFight.defenders.length < 1) {
+        pitFight.losses++;
+        messages.billboard(messages.gameOver);
+        pitFight.gamesPlayed++;
+        pitFight.gameReset();
+    } 
+        
+    
     },
     
     gameReset() {
@@ -166,38 +186,23 @@
     
     setBoard() {
         pitFight.combatants = [];
-        console.log("dudes array = " + pitFight.dudes);
-        console.log(console.dir(pitFight.dudes));
-        console.log("dudes array length = " +pitFight.dudes.length);
+        
         //create character objects to fill in the combatants array
         for (i = 0; i < pitFight.dudes.length; i++) {
-            console.log("i = " + i);
             var x = new Character();
-            console.log("This is the console.log of x: " + x);
-            console.log("This is the console.log of the console.dir of x: " + console.dir(x));
             x.attackPower = this.d6(3);
-            //console.log("attack power = " + pitFight.combatants[i].attackPower);
             x.hp = this.d6(17);
             x.counterPower = pitFight.d6(6);
             x.icon = this.images[i];
             x.name = this.dudes[i];
             this.combatants.push(x);
-            console.log("This is the console log of the combatants array = " + console.dir(this.combatants));
-            console.log("i-th index is " + i + " and the element from the combatants array at the 0th index is = " + pitFight.combatants[0]);
-            console.log("i-th index is " + i + " and the element from the combatants array at the 7th index is = " + pitFight.combatants[7]);
-            console.log("The name of the " + i + "th member of pitFight.combatants is " + pitFight.combatants[i].name);
-            console.log("The name of the " + i + "th member of pitFight.combatants is " + pitFight.combatants[7].name);
-            pitFight.combatants.forEach(dude => {
-                console.log("This is the console.log of each member of dudes: " + dude);
-            });
-    
            //attach each character to a card
             var card = $("<div class = 'hero-card' id=" + pitFight.combatants[i].name + ">");
             card.attr("combatant-index", i);
             card.data(pitFight.combatants[i]);
             var img = $("<img src='" + pitFight.combatants[i].icon + "' alt = 'image of '" + pitFight.combatants[i].name + ">");
             var textBox = $("<div class = 'hero-text' >");
-            var details = $("<h4><b>" + pitFight.combatants[i].name + "</b></h4><p id = 'hp' >Health: " + pitFight.combatants[i].hp + "</p><p>Attack Power: " + pitFight.combatants[i].attackPower + "</p><p>Counter Attack Power: " + pitFight.combatants[i].counterPower + "</p>");
+            var details = $("<h2><b>" + pitFight.combatants[i].name + "</b></h2><p id = 'hp' >Health: " + pitFight.combatants[i].hp + "</p><p>Attack Power: " + pitFight.combatants[i].attackPower + "</p><p>Counter Attack Power: " + pitFight.combatants[i].counterPower + "</p>");
             details.data("stats", {name: pitFight.combatants[i].name, hp: pitFight.combatants[i].hp, attack: pitFight.combatants[i].attackPower, counter: pitFight.combatants[i].counterPower});
             textBox.append(details);
             card.append(img, textBox);      
@@ -240,7 +245,7 @@
           
         
     
-    //}); //end of ready function call
+    }); //end of ready function call
     
     
     
