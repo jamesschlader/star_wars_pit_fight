@@ -1,0 +1,121 @@
+* {
+    box-sizing: border-box;
+}
+
+html {
+    background-image: url(".css/assets/images/images/background3.jpg");
+    background-size: cover;
+}
+
+body {
+    margin: 0 auto;
+}
+
+.container {
+    position: relative;
+    width: 1200px;
+    display: grid;
+    grid-template-columns: repeat(5 1fr);
+    grid-template-rows: repeat(4 1fr);
+    grid-gap: 10px;
+    
+}
+.queue {
+    background-color: hsla(0, 0%, 41%, 0.24);
+    padding: 10px;
+}
+
+#billboard {
+    position: absolute;
+    visibility: hidden;
+}
+
+#combatant-area {
+    grid-column: 1 / 4;
+    grid-row: 1 / 5;
+}
+
+#champion-box {
+    grid-column: 4 / 6;
+    grid-row: 1 / 2;
+}
+
+#defender-box {
+    grid-column: 4 / 6;
+    grid-row: 4 / 5;
+}
+
+#characterPen {
+    width: 100%;
+}
+
+#battlefield {
+    grid-column: 4 / 6;
+    grid-row: 2 / 3;
+}
+
+.hero-card {
+    display: inline-block;
+    margin: 5px;
+    height: 300px;
+    width: 200px;
+    position: relative;
+    box-shadow: 0 3px 3px black;
+    transition: 3s;
+}
+.hero-card>p {
+    margin: 0;
+}
+
+.hero-card-dead {
+    position: absolute;
+    visibility: hidden;
+
+}
+
+.hero-card>img {
+    height:200px;
+    width: 100%;
+}
+
+.hero-text {
+    height: 200px;
+text-align: center;
+}
+
+.hero-text>p {
+    margin: 0;
+    padding: 0;
+}
+
+.hero-text>h4 {
+    margin: 5px;
+}
+
+.versus {
+    display: inline-block;
+}
+
+.action-button {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 12px;
+    width: 20%;
+}
+
+.action-button:hover {
+    box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+}
+
+.action-button:active {
+    background-color: #4CAF50;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+  }
+
