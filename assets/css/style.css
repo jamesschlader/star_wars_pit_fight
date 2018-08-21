@@ -34,6 +34,7 @@ html {
     
     display: inline-block;
     text-decoration-style: none;
+    
 }
 
 .container {
@@ -45,6 +46,11 @@ html {
     grid-template-rows: repeat(5 1fr);
     grid-gap: 10px;
     
+}
+
+.logo {
+    display: inline-block;
+    height: 5.0rem;
 }
 .queue {
     background-color: hsla(0, 0%, 41%, 0.24);
@@ -93,10 +99,10 @@ html {
 
 .scoreboard {
     position: absolute;;
-   bottom: 40%;
+    bottom: 40%;
     left: 40%;
     background-color: hsla(0, 0%, 41%, 0.24);
-   width: 40%;
+    width: 40%;
 }
 
 #wins {
@@ -150,6 +156,17 @@ html {
     transition: 3s;
 }
 
+.big-card {
+    display: inline-block;
+    align-content: center;
+    margin: 20px;
+    height: 640px;
+    width: 400px;
+    position: relative;
+    box-shadow: 6px 6px 6px #BB0B0A;
+    transition: 3s;
+}
+
 .hero-card>p {
     margin: 0;
 }
@@ -165,13 +182,25 @@ html {
     width: 100%;
 }
 
+.big-card>img {
+    height: 400px;
+    width: 100%
+}
+
 .hero-text {
-    
     margin-top: 5px;
-   padding: 0 auto;
+    padding: 0 auto;
     background-color: rgba(59, 57, 57, 0.267);
     height: 100px;
-text-align: center;
+    text-align: center;
+}
+
+.big-card-text {
+    margin-top: 5px;
+    padding: 0 auto;
+    background-color: rgba(59, 57, 57, 0.267);
+    height: 200px;
+    text-align: center;
 }
 
 .hero-text>p {
@@ -179,8 +208,17 @@ text-align: center;
     padding: 3px;
 }
 
+.big-card-text> {
+    margin: 0;
+    padding: 10px;
+}
+
 .hero-text>h2 {
     font-size: 1.4rem;
+}
+
+.big-card-text>h2 {
+    font-size: 3.0rem;
 }
 
 .versus {
