@@ -189,19 +189,28 @@ $(document).ready(function() {
     gameReset() {
         
     console.log("Somebody called the game reset");
+        $(pitFight.champion).empty();
 
+
+        if ($("#combatant-area").hasClass("billboard")) {
+            $("#combatant-area").removeClass("billboard");
+        };
+        if ($("#champion-box").hasClass("billboard")) {
+            $("#champion-box").removeClass("billboard")
+        };
+        if ($("#battlefield").hasClass("battlefield")) {
+            $("#battlefield").removeClass("battlefield");
+        };
+        if ($("#defender-box").hasClass("ready-defender")) {
+            $("#defender-box").removeClass("ready-defender")
+        };
         
-
-       
+        
 
         $("#characterPen, #billboard, #champion, #defender, #pit").empty();
         pitFight.combatants = [];
-        console.log("from gamereset, combatants: " + console.dir(pitFight.combatants));
-        //pitFight.champion = "";
         pitFight.counter = 0;
         pitFight.rounds = 1;
-        
-        //messages.billboard(messages.restart);
 
         if (pitFight.gamesPlayed < 1) {
             messages.billboard(messages.rules);
@@ -209,13 +218,6 @@ $(document).ready(function() {
 
         pitFight.setBoard();
         console.log("from gamereset, setboard has returned from duty");
-       
-       
-           //console.log("from gamereset, billboard is done " + messages.billboard(messages.restart));
-        
-        
-        //pitFight.moveCard();
-       // console.log("from gamereset, movecard has returned from duty");
         
     },
 
@@ -249,6 +251,9 @@ $(document).ready(function() {
             card.append(img, textBox);  
             //render the cards to the characterPen
             $("#characterPen").append(card);
+     }
+     if (pitFight.gamesPlayed > 1) {
+        messages.billboard(messages.restart);
      }
      pitFight.moveCard();
     }
