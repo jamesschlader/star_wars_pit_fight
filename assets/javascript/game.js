@@ -173,18 +173,23 @@
         for (i = 0; i < pitFight.dudes.length; i++) {
             console.log("i = " + i);
             var x = new Character();
-            console.log(x);
-            console.log(console.dir(x));
-            x.attackPower = pitFight.d6(3);
+            console.log("This is the console.log of x: " + x);
+            console.log("This is the console.log of the console.dir of x: " + console.dir(x));
+            x.attackPower = this.d6(3);
             //console.log("attack power = " + pitFight.combatants[i].attackPower);
-            x.hp = pitFight.d6(17);
+            x.hp = this.d6(17);
             x.counterPower = pitFight.d6(6);
-            x.icon = pitFight.images[i];
-            x.name = pitFight.dudes[i];
-            pitFight.combatants.push(x);
-            console.log("combatants array = " + console.dir(pitFight.combatants));
-            console.log("i-th element = " + pitFight.combatants[i]);
-            console.log("The name of the " + i + "th member of pitFight.combatants is " + pitFight.combatants.name);
+            x.icon = this.images[i];
+            x.name = this.dudes[i];
+            this.combatants.push(x);
+            console.log("This is the console log of the combatants array = " + console.dir(this.combatants));
+            console.log("i-th index is " + i + " and the element from the combatants array at the 0th index is = " + pitFight.combatants[0]);
+            console.log("i-th index is " + i + " and the element from the combatants array at the 7th index is = " + pitFight.combatants[7]);
+            console.log("The name of the " + i + "th member of pitFight.combatants is " + pitFight.combatants[i].name);
+            console.log("The name of the " + i + "th member of pitFight.combatants is " + pitFight.combatants[7].name);
+            pitFight.combatants.forEach(dude => {
+                console.log("This is the console.log of each member of dudes: " + dude);
+            });
     
            //attach each character to a card
             var card = $("<div class = 'hero-card' id=" + pitFight.combatants[i].name + ">");
