@@ -16,10 +16,15 @@ $(document).ready(function() {
             if (style === "attack") {//Send attackDamage. 
                 console.log("The champion strikes!");
                 console.log("Attack power = " + this.attackPower );
-                if (pitFight.round === 1) {
-                    return this.attackPower;
+                if (pitFight.round < 2) {
+                    pitFight.round++;
+                    this.attackPower = this.attackPower * 2;
+                    return Math.round(this.attackPower / 2);
                 } else {           
                 this.attackPower = this.attackPower * 2;
+                
+                console.log("is this the champion's attack power card spot? " + pitFight.champion);
+                
                 console.log("The attack power now is: " + this.attackPower);
                 return this.attackPower;
                 }       
@@ -52,7 +57,7 @@ $(document).ready(function() {
     losses: 0,
     counter: 0,
     round: 1,
-    
+    champion: 0,
     defenders: [],
     
     moveCard() {
@@ -68,20 +73,18 @@ $(document).ready(function() {
             } else if (pitFight.counter < 4) {
                 $("#defender").append(x);
                 pitFight.defenders.push(x);
+                $(".hero-card").off("dblclick", ".hero-card");
                 console.log("pitFight defenders length = " + pitFight.defenders.length);
-                pitFight.counter++        
-            };
-            
-            if (pitFight.defenders.length === 3) {
-                messages.billboard(messages.readyBattle);
-                    if (messages.billboard) {
-                     pitFight.resolveBattle();
+                pitFight.counter++   
+                if (pitFight.defenders.length === 3) {
+                    
+                    pitFight.resolveBattle();
+                    
                 }
-            }
-    
+            }  
         }
             $(".hero-card").on("dblclick", move);
-            $(".hero-card").off("dblclick", ".hero-card");
+            
         console.log("dbl-click listener off");
         console.log(pitFight.defenders.length);
         
@@ -92,7 +95,7 @@ $(document).ready(function() {
        
         if (pitFight.counter === 4) {
             
-            $("#pit").prepend(x);   
+            $("#pit").append(x);   
         }
     
         var victim = pitFight.defenders[0].attr("combatant-index");
@@ -107,7 +110,9 @@ $(document).ready(function() {
     
         $("#attack-button").on("click", function(){
             console.log("It's an attack!")
-            var damage = attacker.attackPower;
+            var damage = attacker.attack("attack");
+            var championAttackPower = pitFight.champion.find("#attack-power");
+            championAttackPower.text("Attack Power: " + damage);
             console.log("damage from attacker = " + damage);
             var counterDmg = defender.counterPower;
             console.log("counter attack damage = " + counterDmg);
@@ -117,32 +122,46 @@ $(document).ready(function() {
            console.log("The defender's card info, I hope: " + console.dir(pitFight.defenders[0]));
            console.log("The defender's new hp: " + defender.hp);
            var defenderHp = pitFight.defenders[0].find("#hp");
-           defenderHp.text(defender.hp);
+           defenderHp.text("Health: " + defender.hp);
 
             if (defenderDead) {
-                
+                pitFight.defenders[0].hide();
                 pitFight.defenders.shift();
-                $("#defender-area").append(pitFight.defenders[0]);
+                pitFight.resolveBattle();
                 pitFight.round++;
                 pitFight.gameOver();
             }
             console.log("counter attack!");
-            var attackerDead = attacker.takeDamage(counterDmg);
+            var championDead = attacker.takeDamage(counterDmg);
             var championHp = pitFight.champion.find("#hp");
-           championHp.text(champion.hp);
-            if (attackerDead) {
+            console.log("The champion's card: " + console.dir(pitFight.champion));
+            console.log("The champion's new hp: " + attacker.hp);
+            console.log("championHp: " + championHp);
+           championHp.text("Health: " + attacker.hp);
+            if (championDead) {
             console.log("Champion is dead!");
-            }
+            pitFight.champion.hide();
             pitFight.gameOver();
+            }
+           
         });  
          
     },
     
     resolveBattle () {
-       
+        $("#pit").empty();
+        console.log("Entering resolveBattle...");
+        $("#combatant-area").hide();
+        $("#combatant-area").addClass("billboard");
+        $("#champion-box").addClass("billboard");
+        $("#battlefield").addClass("battlefield");
+        $("#defender-box").addClass("ready-defender");
+
+        messages.billboard(messages.readyBattle);
+       console.log("Did the billboard fire?");
     $("#pit").append(pitFight.champion);
     
-    var vs = $("<img class = 'versus' src = './assets/images/images/versus.jpg' style='width: 100px' height='100px'>")
+    var vs = $("<img class = 'versus' src = './assets/images/images/versus.jpg' style='width: 100px' height='100px' display='inline-block'>")
     $("#pit").append(vs);
     
     $("#pit").append(pitFight.defenders[0]);
@@ -160,32 +179,37 @@ $(document).ready(function() {
     },
     
     gameOver() {
-    if (pitFight.champion.hp < 1) {
-        pitFight.wins++;
+    if (pitFight.combatants[pitFight.champion.attr("combatant-index")].hp < 1) {
+        pitFight.losses++;
+        $("#losses").text("Losses: " + pitFight.losses);
         messages.billboard(messages.gameOver);
         pitFight.gamesPlayed++;
         pitFight.gameReset();
     } else if (pitFight.defenders.length < 1) {
-        pitFight.losses++;
+        pitFight.wins++;
+        $("#wins").text("Wins: " + pitFight.wins);
         messages.billboard(messages.gameOver);
         pitFight.gamesPlayed++;
         pitFight.gameReset();
     } 
-        
-    
     },
     
     gameReset() {
-        $("#characterPen", "#champion", "#defender", "#pit").empty();
-        pitFight.combatants.splice(0,pitFight.combatants.length);
+        console.log("Made it to game reset!");
+        $("#characterPen, #champion, #defender, #pit").empty();
+        pitFight.combatants = [];
         pitFight.champion = "";
         pitFight.counter = 0;
         pitFight.rounds = 1;
         pitFight.setBoard();
+        pitFight.moveCard();
     },
     
     setBoard() {
         pitFight.combatants = [];
+        $("#combatant-area").removeClass("billboard");
+        $("#combatant-area").show();
+
         
         //create character objects to fill in the combatants array
         for (i = 0; i < pitFight.dudes.length; i++) {
@@ -202,7 +226,7 @@ $(document).ready(function() {
             card.data(pitFight.combatants[i]);
             var img = $("<img src='" + pitFight.combatants[i].icon + "' alt = 'image of '" + pitFight.combatants[i].name + ">");
             var textBox = $("<div class = 'hero-text' >");
-            var details = $("<h2><b>" + pitFight.combatants[i].name + "</b></h2><p id = 'hp' >Health: " + pitFight.combatants[i].hp + "</p><p>Attack Power: " + pitFight.combatants[i].attackPower + "</p><p>Counter Attack Power: " + pitFight.combatants[i].counterPower + "</p>");
+            var details = $("<h2><b>" + pitFight.combatants[i].name + "</b></h2><p id = 'hp' >Health: " + pitFight.combatants[i].hp + "</p><p id = 'attack-power' >Attack Power: " + pitFight.combatants[i].attackPower + "</p><p>Counter Attack Power: " + pitFight.combatants[i].counterPower + "</p>");
             details.data("stats", {name: pitFight.combatants[i].name, hp: pitFight.combatants[i].hp, attack: pitFight.combatants[i].attackPower, counter: pitFight.combatants[i].counterPower});
             textBox.append(details);
             card.append(img, textBox);      
@@ -217,8 +241,8 @@ $(document).ready(function() {
     
     
     var messages = {
-        rules: 'Choose your champion by double-clicking on the card. After you have chosen your champion, choose three defenders by double-clicking on their cards.',
-        readyBattle: 'During each round, the Champion attacks the first Defender in the group. The Defender responds with a Counter Attack. If either are reduced below 0 HP, they die. However, with each susequent round, the Champion\'s Attack Power doubles while the Defender\'s Counter Attack Power stays the same.\nAre you ready to start the battle?',
+        rules: 'Choose your champion by double-clicking on the card. After you have chosen your champion, choose three defenders by double-clicking on their cards. <br> Choose wisely. <br> During each round, the Champion attacks the first Defender in the group. The Defender responds with a Counter Attack. If either are reduced below 0 HP, they die. However, with each susequent round, the Champion\'s Attack Power doubles while the Defender\'s Counter Attack Power stays the same. ',
+        readyBattle: 'Are you ready to start the battle?',
         gameOver: "Game over!",
     
         billboard(message) {
@@ -226,6 +250,7 @@ $(document).ready(function() {
             var announcement = $("#billboard");
             announcement.append($("<h3 id='text'>"));
             $("#text").append(message);
+           announcement.addClass("billboard-show");
           
             var x = $("<button type ='button'class ='action-button' id = 'ready-button'></button");
             x.text("Ready");
