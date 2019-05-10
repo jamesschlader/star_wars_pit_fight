@@ -1,6 +1,10 @@
 //Star Wars Pit Fight Object Game
 //Main object: starWars
 
+import characters from "./utilities/characters.js";
+import characterImages from "./utilities/characterImages.js";
+import d6 from "./functions/d6.js";
+
 $(document).ready(function() {
   var Character = function Character() {
     let name = "";
@@ -31,36 +35,8 @@ $(document).ready(function() {
   var pitFight = {
     //Beginning of the game object
     combatants: [],
-    dudes: [
-      "Leia",
-      "Luke",
-      "Darth Vader",
-      "Han Solo",
-      "The Emperor",
-      "Obi Wan Kenobi",
-      "Yoda",
-      "Chewbacca",
-      "Kylo Ren",
-      "Boba Fett",
-      "Snoke",
-      "General Grievous",
-      "Darth Maul"
-    ],
-    images: [
-      "./assets/images/images/leia edit.jpg",
-      "./assets/images/images/luke edit.jpg",
-      "./assets/images/images/darth vader edit.jpg",
-      "./assets/images/images/han solo edit.jpg",
-      "./assets/images/images/palpatine edit.jpg",
-      "./assets/images/images/obi wan edit.jpg",
-      "./assets/images/images/yoda edit.jpg",
-      "./assets/images/images/chewbacca edit.jpg",
-      "./assets/images/images/kylo ren edit.jpg",
-      "./assets/images/images/boba fett edit.jpg",
-      "./assets/images/images/snoke edit.jpg",
-      "./assets/images/images/grievous edit.jpg",
-      "./assets/images/images/darth maul edit.jpg"
-    ],
+    dudes: characters,
+    images: characterImages,
     gamesPlayed: 0,
     wins: 0,
     losses: 0,
@@ -70,6 +46,7 @@ $(document).ready(function() {
     battleStarted: false,
     defenders: [],
     album: [],
+    d6: d6,
 
     moveCard() {
       pitFight.defenders = [];
@@ -125,17 +102,9 @@ $(document).ready(function() {
       var attacker = pitFight.combatants[hero];
 
       $("#attack-button").on("click", function() {
-        //console.log(`attack round = ${pitFight.round}`);
         const attackerDamage = attacker.attackPower;
-        //console.log(
-        // `attacker's current round attack value is ${attackerDamage}`
-        //  );
-        // console.log(
-        // `attacker hp = ${attacker.hp}\ndefender hp = ${defender.hp}`
-        // );
 
         const championAttackPower = pitFight.champion.find("#attack-power");
-        // console.log(`championAttackPower is ${championAttackPower}`);
 
         championAttackPower.removeClass("fancyLetter");
         championAttackPower.addClass("fancyLetter");
@@ -154,15 +123,6 @@ $(document).ready(function() {
 
         const attackerDead = attacker.takeDamage(counterDmg);
 
-        // console.log(
-        //   `attacker dead? ${attackerDead}.\nDefender dead? ${defenderDead}`
-        // );
-        // console.log(
-        //   `After the attack, we have:\nattacker hp = ${
-        //     attacker.hp
-        //   }\ndefender hp = ${defender.hp}`
-        // );
-
         defenderHp = pitFight.defenders[0].find("#hp");
         defenderHp.text("Health: " + defender.hp);
 
@@ -179,7 +139,6 @@ $(document).ready(function() {
           pitFight.champion.hide();
 
           pitFight.gameOver();
-          // console.log("gamereset is finished after the champion died.");
 
           messages.billboard("loss", messages.loser);
         } else if (defenderDead) {
@@ -187,9 +146,6 @@ $(document).ready(function() {
           pitFight.defenders.shift();
 
           if (pitFight.gameOver()) {
-            // console.log(
-            //   "defender dead inside resolveattack called the gamereset"
-            // );
             messages.billboard("win", messages.winner);
           } else {
             pitFight.resolveBattle();
@@ -199,11 +155,9 @@ $(document).ready(function() {
     },
 
     resolveBattle() {
-      // console.log(`round is ${pitFight.round}`);
       pitFight.round++;
       pitFight.battleStarted = true;
-      //   console.log(`pitFight.battleStarted = ${pitFight.battleStarted}`);
-      //   console.log(`defenders remaining = ${pitFight.defenders.length}`);
+
       if (pitFight.round < 2) {
         messages.billboard("battle", messages.readyBattle);
       } else {
@@ -237,35 +191,21 @@ $(document).ready(function() {
       $("#pit").append(pitFight.defenders[0]);
       $("#pit").hide();
       if (pitFight.resolveAttack()) {
-        // console.log(`The fight ended in a death.`);
       }
-    },
-
-    d6(factor) {
-      sum = 0;
-      for (let j = 1; j < factor + 1; j++) {
-        sum = sum + Math.floor(Math.random() * 5 + 1);
-      }
-      return sum;
     },
 
     gameOver() {
       if (
         pitFight.combatants[pitFight.champion.attr("combatant-index")].hp < 1
       ) {
-        // console.log("We're in the champion loses outright condition.");
-
         pitFight.losses++;
         $("#losses").text("Losses: " + pitFight.losses);
         if ($("#billboard").hasClass("billboard")) {
           $("#billboard").addClass("billboard-show");
         }
 
-        // console.log("champion loses outright called the gamereset");
         pitFight.gameReset(pitFight.defenders[0]);
       } else if (pitFight.defenders.length < 1) {
-        //  console.log("We're in the champion wins condition.");
-
         pitFight.wins++;
         $("#wins").text("Wins: " + pitFight.wins);
 
@@ -273,7 +213,6 @@ $(document).ready(function() {
           $("#billboard").addClass("billboard-show");
         }
 
-        // console.log("champion wins called the gamereset");
         pitFight.gameReset(pitFight.champion);
         return true;
       }
@@ -288,11 +227,7 @@ $(document).ready(function() {
           0,
           winner[0].innerText.indexOf("\n")
         );
-
-        // console.log(`Winner is `, target);
       }
-
-      //  console.log("games played = " + pitFight.gamesPlayed);
 
       $(pitFight.champion).empty();
 
@@ -319,7 +254,6 @@ $(document).ready(function() {
       }
 
       pitFight.setBoard();
-      //console.log("from gamereset, setboard has returned from duty");
     },
 
     setBoard() {
@@ -374,11 +308,10 @@ $(document).ready(function() {
         });
         textBox.append(details);
         card.append(img, textBox);
-        //render the cards to the characterPen
+
         $("#characterPen").append(card);
       }
       if (pitFight.gamesPlayed > 1) {
-        // console.log("games played: " + pitFight.gamesPlayed);
       }
 
       pitFight.moveCard();
