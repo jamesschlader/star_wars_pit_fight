@@ -34,7 +34,7 @@ html {
 .container {
   margin: 0 auto;
   position: relative;
-  width: 100%;
+  width: 90%;
   height: 100vh;
   display: grid;
   grid-template-columns: repeat(10 1fr);
@@ -159,8 +159,8 @@ html {
   display: inline-block;
   align-content: center;
   margin: 10px;
-  height: 320px;
-  width: 200px;
+  height: auto;
+  width: auto;
   position: relative;
   box-shadow: 3px 3px 3px #bb0b0a;
   transition: 3s;
@@ -170,8 +170,8 @@ html {
   display: inline-block;
   align-content: center;
   margin: 20px;
-  height: 640px;
-  width: 400px;
+  height: 320px;
+
   position: relative;
   box-shadow: 6px 6px 6px #bb0b0a;
   transition: 3s;
@@ -188,12 +188,13 @@ html {
 }
 
 .hero-card > img {
-  height: 200px;
+  height: auto;
   width: 100%;
 }
 
 .big-card > img {
-  height: 400px;
+  align-self: auto;
+
   width: 100%;
 }
 
@@ -201,7 +202,7 @@ html {
   margin-top: 5px;
   padding: 0 auto;
   background-color: rgba(59, 57, 57, 0.267);
-  height: 100px;
+  height: auto;
   text-align: center;
 }
 
@@ -209,7 +210,8 @@ html {
   margin-top: 5px;
   padding: 0 auto;
   background-color: rgba(59, 57, 57, 0.267);
-  height: 200px;
+  height: auto;
+  width: auto;
   text-align: center;
 }
 
